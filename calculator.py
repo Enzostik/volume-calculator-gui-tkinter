@@ -40,47 +40,59 @@ class Body(ABC):
         ''' Se debe declarar la fórmula de superficie '''
         pass
 
+    def __str__(self):
+        #Para obtener el nombre empezando con mayuscula y el resto en minúscula
+        return self.name[0].upper()+self.name[1:].lower()
+
 #Clases para cada nuevo cuerpo geométrico
 class Sphere(Body):
     def __init__(self, radius:int|float = 0):
         super().__init__(name='Esfera', radio = radius)
 
-    @property
     def volume(self)->float:
         return (4/3) * PI * self._parameters['radio']**3
 
-    @property
     def surface(self)->float:
         return 4 * PI * self._parameters['radio']**2
 
+class Cube(Body):
+    def __init__(self, side:int|float = 0):
+        super().__init__(name='Cubo', lado=side)
+    
+    def volume(self):
+        return self._parameters['lado']**3
+    
+    def surface(self):
+        return 6 * (self._parameters['lado']**2)
+
 '''
---------------------------------------------
-        Ejemplo de implementación
---------------------------------------------
+-------------------------------------------
+    Creación de los cuerpos geométricos
+-------------------------------------------
 '''
 #Variable donde guardar los cuerpos creados/configurados
-BODIES_DATA = (Sphere(), Sphere(180))
+bodies_data:list[Body] = [Sphere(), Cube()]
 
-selected_body = BODIES_DATA[0]
-print('Esfera 1')
-#Para modificar los parametros al mismo tiempo
-print(selected_body.parameters)
-selected_body.parameters = {'radio': 29}
-print(selected_body.parameters)
+# selected_body = BODIES_DATA[0]
+# print('Esfera 1')
+# #Para modificar los parametros al mismo tiempo
+# print(selected_body.parameters)
+# selected_body.parameters = {'radio': 29}
+# print(selected_body.parameters)
 
-#Caso para modificar los valores
-selected_body.set('radio', 100)
-print(selected_body.get('radio'))
-#Si no existe el parametro no hace nada
-selected_body.set('abdcs', 100)
-print(selected_body.get('abdcs'))
-#Mostrar volumen y superficie del cuerpo
-print('Volumen:',selected_body.volume)
-print('Superficie:',selected_body.surface)
+# #Caso para modificar los valores
+# selected_body.set('radio', 100)
+# print(selected_body.get('radio'))
+# #Si no existe el parametro no hace nada
+# selected_body.set('abdcs', 100)
+# print(selected_body.get('abdcs'))
+# #Mostrar volumen y superficie del cuerpo
+# print('Volumen:',selected_body.volume)
+# print('Superficie:',selected_body.surface)
 
-#Ahora se cambia el cuerpo a la segunda esfera
-selected_body = BODIES_DATA[1]
-print('Esfera 2')
-#Mostrar volumen y superficie de la otra esfera
-print('Volumen:',selected_body.volume)
-print('Superficie:',selected_body.surface)
+# #Ahora se cambia el cuerpo a la segunda esfera
+# selected_body = BODIES_DATA[1]
+# print('Esfera 2')
+# #Mostrar volumen y superficie de la otra esfera
+# print('Volumen:',selected_body.volume)
+# print('Superficie:',selected_body.surface)
