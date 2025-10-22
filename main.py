@@ -67,8 +67,14 @@ class CalculatorFrame:
 
     #Cambiar el valor del texto de volumen y superficie
     def set_results(self):
-        self.var_volume.set("{:.4f}".format(self.body.volume()))
-        self.var_surface.set("{:.4f}".format(self.body.surface()))
+        self.var_volume.set(self.__format_value(self.body.volume()))
+        self.var_surface.set(self.__format_value(self.body.surface()))
+
+    #Si el valor es menor a 0.001 utilizar exponente para poder leerlo
+    def __format_value(self, value):
+        if value == 0 or value > 0.001:
+            return round(value, 4)
+        return "{:.4e}".format(value)
 
     #Cambiar el contenido del frame para que corresponda al cuerpo geométrico
     def load(self, body:calculator.Body):
