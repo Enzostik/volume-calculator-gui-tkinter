@@ -47,11 +47,18 @@ class CalculatorFrame:
         self.var_surface = tk.StringVar()
         self.result_surface:tk.Entry = tk.Entry(master=self.main_frame, textvariable=self.var_surface, font=("Arial", 15), fg="blue", justify='center', width=25, state='readonly')
 
+        #Click derecho para copiar los resultados
+        self.popup_menu = tk.Menu(master=root, tearoff=0)
+        self.popup_menu.add_command(label='Copiar', command=lambda : [root.clipboard_clear(), root.clipboard_append(self.value_selected)])
+        self.result_volume.bind('<Button-3>', lambda event, result_var = self.var_volume : self.__show_popupmenu(result_var, event))
+        self.result_surface.bind('<Button-3>', lambda event, result_var = self.var_surface : self.__show_popupmenu(result_var, event))
+        self.value_selected:float = None
+
     #Comprobar que el valor a ingresar sea un numero
     def validate_number(self, value:str)->bool:
         if value != '': #Si no se borra el contenido
             try:
-                float(value)
+                return float(value) >= 0 #Tiene que ser un numero y debe ser mayor o igual a 0
             except:
                 return False
         return True
@@ -135,7 +142,13 @@ class CalculatorFrame:
             widget.destroy()
         #Volver a colocar le etiqueta principal
         self.etiqueta_1.pack(side='top', fill='x')
-            
+
+    def __show_popupmenu(self, value_string:tk.StringVar, event:tk.Event = None):
+        try:
+            self.value_selected = float(value_string.get())
+            self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+        finally:
+            self.popup_menu.grab_release() 
 
 '''
 ----------------------------------
