@@ -25,15 +25,17 @@ Elementos de la ventana
 '''
 class CalculatorFrame:
     def __init__(self, root:tk.Tk):
+        #Variable que contenga el cuerpo para los calculos
+        self.body = None
+
+        #Se crea un frame que ocupe toda la ventana. El contenido a editar se encuentra dentro de este frame.
         self.main_frame = tk.Frame(root, borderwidth=1, relief="groove")
         self.main_frame.configure(bg="lightblue")
         self.main_frame.pack(expand=True, fill='both', pady=20, padx=20)
+
         #Etiqueta de inicio
         self.etiqueta_1 = tk.Label(self.main_frame, text=SALUDO, font=("Arial", 12), bg="gray",wraplength=350) #mensaje principal
         self.etiqueta_1.pack(side='top', fill='x')
-
-        #Variable que contenga el cuerpo para los calculos
-        self.body = None
 
         #Registrar la function para validar que la nueva entrada sea un número
         self.entry_verification = (root.register(self.validate_number), '%P')
@@ -55,21 +57,18 @@ class CalculatorFrame:
         return True
     
     #Variable que se llamará cuando se cambie alguna de las entradas de texto
-    def change_value(self, name:str):
-        #Obtener el contenido de la entrada
-        value = self.entries_var[name].get()
-        #Si la entrada está vacía será 0
-        if value == '':
-            value = 0 
+    def change_value(self, name:str, value:str):
+        #Si la entrada está vacía será 0. Convertir variable string --> float
+        value = 0 if value == '' else float(value)
         #Cambiar el valor del parametro
-        self.body.set(name, float(value))
+        self.body.set(name, value)
         #Cambiar el valor del texto de volumen y superficie
         self.set_results()
 
     #Cambiar el valor del texto de volumen y superficie
     def set_results(self):
-        self.var_volume.set(round(self.body.volume(), 2))
-        self.var_surface.set(round(self.body.surface(), 2))
+        self.var_volume.set("{:.4f}".format(self.body.volume()))
+        self.var_surface.set("{:.4f}".format(self.body.surface()))
 
     #Cambiar el contenido del frame para que corresponda al cuerpo geométrico
     def load(self, body:calculator.Body):
@@ -80,15 +79,15 @@ class CalculatorFrame:
         #Modificar el título de la ventana para que sea el nombre del cuerpo
         self.etiqueta_1.config(text=body)
         #Cargar la imagen
-        img = Image.open(f'images/{body.name.lower()}.png')
+        img = Image.open(f'images/{body.name.lower()}.png') #Se carga el archivo con el mismo nombre de la forma en la carpeta imagenes
         img = img.resize((150, 150))
-        image = ImageTk.PhotoImage(img)
-        etiqueta_img = tk.Label(self.main_frame, image=image)
+        image = ImageTk.PhotoImage(img) #Convertir la imagen para utilizarla en tkinter
+        etiqueta_img = tk.Label(self.main_frame, image=image) #Añadir la imagen en un Label
         etiqueta_img.image = image
-        etiqueta_img.pack(pady=5)
+        etiqueta_img.pack(pady=5) #Añadir el label al frame
         #Etiqueta para las instrucciones
         etiqueta_instruccion = tk.Label(self.main_frame, text="Ingrese los valores indicados:", font=("Arial", 10), justify='left', background='lightblue')
-        etiqueta_instruccion.pack(fill='x', pady=5)
+        etiqueta_instruccion.pack(fill='x', pady=5) #Añadir la etiqueta al frame
 
         #Crear las entradas de texto para cada parámetro
         
@@ -103,7 +102,7 @@ class CalculatorFrame:
             entrada_valor = tk.Entry(self.main_frame, textvariable=variable_valor, validate='key', validatecommand=self.entry_verification)
             entrada_valor.pack(pady=5)
             #Evento en caso de modificación de la entrada de texto
-            variable_valor.trace_add('write', lambda name, _index, _mode : self.change_value(name))
+            variable_valor.trace_add('write', lambda name, _index, _mode, v = variable_valor : self.change_value(name, v.get()))
 
         #Añadir entradas de solo lectura para mostrar los resultados del volumen y de la superficie del cuerpo
         etiqueta_volumen = tk.Label(self.main_frame, text=f"El volumen del {body.name.lower()} es:", font=("Arial", 15), fg="blue", bg='gray')
@@ -141,7 +140,7 @@ def select(body:calculator.Body):
     main_frame.load(deepcopy(body))
 
 def clean_window():
-    pass
+    main_frame.clean_frame()
 
 '''
 ---------------------
@@ -171,10 +170,6 @@ menu_principal =tk.Menu(menu_bar, tearoff=0)
 submenu_figuras=tk.Menu(menu_principal, tearoff=0)
 window.config(menu=menu_bar)
 
-
-#Ventana principal de la aplicación
-main_frame = CalculatorFrame(window)
-
 #Añadir las figuras al sub-menu figuras
 for body in bodies:
     submenu_figuras.add_command(label=body, command=lambda x = body : select(x))
@@ -183,12 +178,12 @@ menu_bar.add_cascade(label="Inicio", menu=menu_principal)
 #Añadir el menu figuras al menu principal
 menu_principal.add_cascade(label='Figuras', menu = submenu_figuras)
 #Añadir el menu figuras al menu principal
-menu_principal.add_command(label='Reiniciar', command= main_frame.clean_frame)
+menu_principal.add_command(label='Reiniciar', command= clean_window)
 #Añadir la opcion salir al menu principal
 menu_principal.add_separator()
 menu_principal.add_command(label='Salir', command=window.destroy)
 
-
-#TODO: Insertar elementos de la ventana aquí
+#Ventana principal de la aplicación
+main_frame = CalculatorFrame(window)
 
 window.mainloop()
