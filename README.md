@@ -55,17 +55,15 @@ class NewBody(Body):
             value2Name = value2
         ) 
 
-    # Para utilizar los valores de los parámetros se deberán utilizar los métodos:
-    # Para obtener los valores: self.get('valueName');
-    # O también: self._parameters['valueName']
+    # Para utilizar los valores de los parámetros se deberán utilizarel método}: self.get('valueName');
 
     # Método abstracto --> Calcular volumen
     def volume(self):
-        return self._parameters['valueName'] * self.get('value2Name')
+        return self.get('valueName') * self.get('value2Name')
 
     # Método abstracto --> calcular superficie
     def surface(self):
-        return self._parameters['valueName'] * self.get('value2Name')
+        return self.get('valueName') * self.get('value2Name')
 ```
 
 ### Añadir-imágenes

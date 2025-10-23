@@ -17,6 +17,30 @@ bodies = calculator.bodies_data
 
 #Elemento de ventana de tkinter
 window = tk.Tk()
+'''
+--------------------
+Funciones generales
+--------------------
+'''
+#Comprobar que el valor a ingresar sea un numero
+def validate_number(value:str)->bool:
+    if value != '': #Si no se borra el contenido
+        try:
+            return float(value) >= 0 #Tiene que ser un numero y debe ser mayor o igual a 0
+        except:
+            return False
+    return True
+
+#Convertir una cadena de caractéres en su correspondiente número
+def string_to_float(value:str)->float:
+    return 0 if value == '' else float(value)
+
+#Convierte un número en una cadena de caractéres
+def format_value(value:float)->str:
+    #Si el valor es menor a 0.001 utilizar exponente para poder leerlo
+    if value == 0 or value > 0.001:
+        return round(value, 4)
+    return "{:.4e}".format(value)
 
 '''
 ------------------------
@@ -38,7 +62,7 @@ class CalculatorFrame:
         self.etiqueta_1.pack(side='top', fill='x')
 
         #Registrar la function para validar que la nueva entrada sea un número
-        self.entry_verification = (root.register(self.validate_number), '%P')
+        self.entry_verification = (root.register(validate_number), '%P')
         #Almacenar las variables de las entradas en un diccionario para que no se borren al no ser referenciadas
         self.entries_var:dict[str, tk.StringVar] = {}
         #Almacenar la referencia a la entrada que será destinada al resultado
@@ -53,15 +77,6 @@ class CalculatorFrame:
         self.result_volume.bind('<Button-3>', lambda event, result_var = self.var_volume : self.__show_popupmenu(result_var, event))
         self.result_surface.bind('<Button-3>', lambda event, result_var = self.var_surface : self.__show_popupmenu(result_var, event))
         self.value_selected:float = None
-
-    #Comprobar que el valor a ingresar sea un numero
-    def validate_number(self, value:str)->bool:
-        if value != '': #Si no se borra el contenido
-            try:
-                return float(value) >= 0 #Tiene que ser un numero y debe ser mayor o igual a 0
-            except:
-                return False
-        return True
     
     #Variable que se llamará cuando se cambie alguna de las entradas de texto
     def change_value(self, name:str, value:str):
@@ -70,18 +85,12 @@ class CalculatorFrame:
         #Cambiar el valor del parametro
         self.body.set(name, value)
         #Cambiar el valor del texto de volumen y superficie
-        self.set_results()
+        self.update_results()
 
     #Cambiar el valor del texto de volumen y superficie
-    def set_results(self):
-        self.var_volume.set(self.__format_value(self.body.volume()))
-        self.var_surface.set(self.__format_value(self.body.surface()))
-
-    #Si el valor es menor a 0.001 utilizar exponente para poder leerlo
-    def __format_value(self, value):
-        if value == 0 or value > 0.001:
-            return round(value, 4)
-        return "{:.4e}".format(value)
+    def update_results(self):
+        self.var_volume.set(format_value(self.body.volume()))
+        self.var_surface.set(format_value(self.body.surface()))
 
     #Cambiar el contenido del frame para que corresponda al cuerpo geométrico
     def load(self, body:calculator.Body):
@@ -128,7 +137,7 @@ class CalculatorFrame:
         etiqueta_superficie.pack(fill='x', pady=5)
         self.result_surface.pack(pady=5)
         #Cambiar los valores de los resultados si es necesario
-        self.set_results()
+        self.update_results()
 
     #Funcion para limpiar la pantalla cuando se cambia de opción de figura
     def clean_frame(self):
