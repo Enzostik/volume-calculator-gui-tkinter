@@ -1,6 +1,6 @@
 # volume-calculator-gui-tkinter
 <div align='center'>
-    <img src="assets/logo.png", width="50%", alt="Volume Calculator">
+    <img src="assets/logo.svg", width="50%", alt="Volume Calculator">
 </div>
 <hr>
 
