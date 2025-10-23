@@ -31,7 +31,7 @@ class CalculatorFrame:
         #Se crea un frame que ocupe toda la ventana. El contenido a editar se encuentra dentro de este frame.
         self.main_frame = tk.Frame(root, borderwidth=1, relief="groove")
         self.main_frame.configure(bg="lightblue")
-        self.main_frame.pack(expand=True, fill='both', pady=20, padx=20)
+        self.main_frame.pack(expand=True, fill='both')
 
         #Etiqueta de inicio
         self.etiqueta_1 = tk.Label(self.main_frame, text=SALUDO, font=("Arial", 12), bg="gray",wraplength=350) #mensaje principal
@@ -92,12 +92,15 @@ class CalculatorFrame:
         #Modificar el título de la ventana para que sea el nombre del cuerpo
         self.etiqueta_1.config(text=body)
         #Cargar la imagen
-        img = Image.open(f'images/{body.name.lower()}.png') #Se carga el archivo con el mismo nombre de la forma en la carpeta imagenes
-        img = img.resize((150, 150))
-        image = ImageTk.PhotoImage(img) #Convertir la imagen para utilizarla en tkinter
-        etiqueta_img = tk.Label(self.main_frame, image=image) #Añadir la imagen en un Label
-        etiqueta_img.image = image
-        etiqueta_img.pack(pady=5) #Añadir el label al frame
+        try: #Intenta agregar imagenes de la figura
+            img = Image.open(f'images/{body.name.lower()}.png') #Se carga el archivo con el mismo nombre de la forma en la carpeta imagenes
+            img = img.resize((150, 150))
+            image = ImageTk.PhotoImage(img) #Convertir la imagen para utilizarla en tkinter
+            etiqueta_img = tk.Label(self.main_frame, image=image) #Añadir la imagen en un Label
+            etiqueta_img.image = image
+            etiqueta_img.pack(pady=5) #Añadir el label al frame
+        except: #Si no hay imagenes que coincidan con el nombre no hace nada
+            pass
         #Etiqueta para las instrucciones
         etiqueta_instruccion = tk.Label(self.main_frame, text="Ingrese los valores indicados:", font=("Arial", 10), justify='left', background='lightblue')
         etiqueta_instruccion.pack(fill='x', pady=5) #Añadir la etiqueta al frame
@@ -170,8 +173,8 @@ Configurar la ventana
 window.title('Calculadora de volumen')
 
 #Tamaño
-window.geometry("500x500")
-window.minsize(400, 350)
+window.geometry("500x600")
+window.minsize(400, 450)
 window.maxsize(600, 700)
 
 #Icono
