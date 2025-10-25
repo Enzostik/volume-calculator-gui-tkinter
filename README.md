@@ -1,6 +1,6 @@
 # volume-calculator-gui-tkinter
 <div align='center'>
-    <img src="assets/logo.svg", width="50%", alt="Volume Calculator">
+    <img src="assets/logo.png", width="50%", alt="Volume Calculator">
 </div>
 <hr>
 
@@ -35,7 +35,12 @@ Aplicación de cálculo del volumen de un cuerpo geométrico con interfaz gráfi
   <img src="assets/" width="60%" alt="Add sizes values" />
 </div>
 
-4. Lectura de los resultados de los valores de volumen y superficie. Haciendo click derecho con el mouse se puede seleccionar la opción de copiar el resultado obtenido. 
+4. *(Opcional)* Seleccionar las unidades deseadas para cada parámetro (longitud, volumen y superficie) desde desde su selector dentro de la ventana, o desde las opciones del menú `unidades` en la barra de menús.
+<div align="center">
+  <img src="assets/" width="60%" alt="Select unit" />
+</div>
+
+5. Lectura de los resultados de los valores de volumen y superficie. Haciendo click derecho con el mouse se puede seleccionar la opción de copiar el resultado obtenido. 
 <div align="center">
   <img src="assets/" width="60%" alt="Read/copy the results" />
 </div>
