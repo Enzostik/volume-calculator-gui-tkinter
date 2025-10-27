@@ -84,7 +84,7 @@ entry_verification = (window.register(validate_number), '%P')
 
 class CustomEntry:
     '''
-    Objeto para guardar el objeto `tk.Entry` con su respectivo `tk.StringVar`.
+    Objeto para guardar el objeto `tk.Widget` con su asociado `tk.StringVar`.
     '''
 
     def __init__(self, widget: tk.Widget, variable: tk.StringVar = None):
@@ -132,10 +132,32 @@ class CalculatorFrame:
         self.body = None
 
         # Se crea un frame que ocupe toda la ventana.
+        canvas = tk.Canvas(root, bg="lightblue")
+        canvas.pack(expand=True, fill='both')
+
         # El contenido a editar se encuentra dentro de este frame.
-        self.main_frame = tk.Frame(root)
+        self.main_frame = tk.Frame(canvas)
         self.main_frame.configure(bg="lightblue")
-        self.main_frame.pack(expand=True, fill='both')
+        # self.main_frame.pack(side=tk.LEFT, expand=True, fill='both')
+
+        # Scrollbar
+        yscroll = tk.Scrollbar(canvas, orient=tk.VERTICAL,
+                               command=canvas.yview, width=20)
+        canvas.configure(yscrollcommand=yscroll.set)
+        yscroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        window_id = canvas.create_window(
+            (0, 0), window=self.main_frame, anchor='nw')
+
+        # Cuando se cambia el tamaño de la ventana o el contenido del main_frame
+        self.main_frame.bind("<Configure>", lambda event: canvas.configure(
+            scrollregion=canvas.bbox("all")))
+        canvas.bind('<Configure>', lambda event: canvas.itemconfig(
+            window_id, width=event.width))
+        # Cuando se mueve la rueda del ratón
+        canvas.bind_all("<MouseWheel>", lambda event: None if
+                      (canvas.yview()[0] == 0.0 and canvas.yview()[1] == 1.0) else
+                      canvas.yview_scroll(int(-1 * (event.delta / 120)), "units"))
 
         # Etiqueta de inicio
         self.etiqueta_1 = tk.Label(self.main_frame, text=SALUDO,
@@ -147,6 +169,8 @@ class CalculatorFrame:
         self.unit_selector: dict[str, CustomEntry] = {}
         for key, values in {'length': u_length,  'surface': u_surface, 'volume': u_volume}.items():
             _variable = tk.StringVar(value=values[0])
+            # Para los selectores de unidad de superficie y volumen se tendrá que recalcular los valores
+            # pero con las nuevas unidades. --> Agregar comando cuando se cambie el menu
             _optionmenu = tk.OptionMenu(self.main_frame, _variable, *values,
                                         command=None if key == 'length' else lambda *args: self.update_results())
             _optionmenu.config(width=35)
@@ -384,9 +408,6 @@ window.maxsize(600, 700)
 # Icono
 window.iconbitmap('icon.ico')
 
-# Deshabilitar modo pantalla completa
-window.attributes("-fullscreen", False)
-
 # Color de fondo
 window.configure(bg="lightblue")
 
@@ -435,4 +456,5 @@ menu_bar.add_cascade(label='Unidades', menu=menu_unidades)
 # Ventana principal de la aplicación
 main_frame = CalculatorFrame(window)
 
+window.update()
 window.mainloop()

@@ -21,6 +21,13 @@ class Body(ABC):
     def __init__(self, name: str, **kwargs: dict[str, int | float]):
         self.name: str = name
         self.__parameters: dict[str, int | float] = kwargs
+        for value in kwargs.values():
+            if not isinstance(value, (float, int)):
+                raise ValueError(
+                    f'Valor es {type(value)}, el parámetro debe ser un número. {float} o {int}'
+                )
+            if value < 0:
+                raise ValueError('El valor del parámetro no puede ser negativo.')
 
     @property
     def parameters(self) -> dict[str, int | float]:
