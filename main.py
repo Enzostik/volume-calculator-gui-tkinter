@@ -5,14 +5,13 @@ import tkinter as tk
 from copy import deepcopy
 from PIL import Image, ImageTk
 
-import calculator
+from calculator import bodies_data as bodies, Body
 from unit_handler import to_meters, length_from_to, meters2_to, meters3_to
 
 # Texto de saludo
 SALUDO = "Seleccione una figura del menú desplegable para calcular su volumen"
 
-# Los cuerpos se pueden obtener del modulo 'calculator'
-bodies = calculator.bodies_data
+# Los cuerpos se obtienen de la lista bodies_data del modulo 'calculator'
 
 # Elemento de ventana de tkinter
 window = tk.Tk()
@@ -156,8 +155,8 @@ class CalculatorFrame:
             window_id, width=event.width))
         # Cuando se mueve la rueda del ratón
         canvas.bind_all("<MouseWheel>", lambda event: None if
-                      (canvas.yview()[0] == 0.0 and canvas.yview()[1] == 1.0) else
-                      canvas.yview_scroll(int(-1 * (event.delta / 120)), "units"))
+                        (canvas.yview()[1] - canvas.yview()[0] == 1.0) else
+                        canvas.yview_scroll(int(-1 * (event.delta / 120)), "units"))
 
         # Etiqueta de inicio
         self.etiqueta_1 = tk.Label(self.main_frame, text=SALUDO,
@@ -169,10 +168,12 @@ class CalculatorFrame:
         self.unit_selector: dict[str, CustomEntry] = {}
         for key, values in {'length': u_length,  'surface': u_surface, 'volume': u_volume}.items():
             _variable = tk.StringVar(value=values[0])
-            # Para los selectores de unidad de superficie y volumen se tendrá que recalcular los valores
-            # pero con las nuevas unidades. --> Agregar comando cuando se cambie el menu
-            _optionmenu = tk.OptionMenu(self.main_frame, _variable, *values,
-                                        command=None if key == 'length' else lambda *args: self.update_results())
+            # Para los selectores de unidad de superficie y volumen
+            # Cambio de unidad --> Actualizar valores
+            _optionmenu = tk.OptionMenu(
+                self.main_frame, _variable, *values,
+                command=None if key == 'length' else lambda *args: self.update_results()
+            )
             _optionmenu.config(width=35)
             self.unit_selector[key] = CustomEntry(
                 _optionmenu,
@@ -200,11 +201,19 @@ class CalculatorFrame:
         # Click derecho para copiar los resultados
         self.popup_menu = tk.Menu(master=root, tearoff=0)
         self.popup_menu.add_command(
-            label='Copiar', command=lambda: [root.clipboard_clear(), root.clipboard_append(self.value_selected)])
+            label='Copiar', command=lambda: [
+                root.clipboard_clear(),
+                root.clipboard_append(self.value_selected)
+            ]
+        )
         self.result_entries['volume'].bind(
-            '<Button-3>', lambda event, result_var=self.result_entries['volume'].variable: self.__show_popupmenu(result_var, event))
+            '<Button-3>', lambda event, result_var=self.result_entries['volume'].variable:
+            self.__show_popupmenu(result_var, event)
+        )
         self.result_entries['surface'].bind(
-            '<Button-3>', lambda event, result_var=self.result_entries['surface'].variable: self.__show_popupmenu(result_var, event))
+            '<Button-3>', lambda event, result_var=self.result_entries['surface'].variable:
+            self.__show_popupmenu(result_var, event)
+        )
         self.value_selected: float = None
     # Variable que se llamará cuando se cambie alguna de las entradas de texto
 
@@ -276,7 +285,7 @@ class CalculatorFrame:
         self.result_entries['surface'].set(format_value(surf_value))
 
     # Cambiar el contenido del frame para que corresponda al cuerpo geométrico
-    def load(self, new_body: calculator.Body):
+    def load(self, new_body: Body):
         '''
         Carga un cuerpo geométrico para representarlo en la interfáz gráfica.
         '''
@@ -361,8 +370,9 @@ class CalculatorFrame:
         # Devolver la etiqueta principal al mensaje de entrada
         self.etiqueta_1.config(text=SALUDO)
         # Elementos a eliminar
+        exception_list = [self.etiqueta_1] + [element.widget for element in list(self.result_entries.values()) + list(self.unit_selector.values())]
         for widget in self.main_frame.winfo_children():
-            if widget in [self.etiqueta_1] + [element.widget for element in list(self.result_entries.values()) + list(self.unit_selector.values())]:
+            if widget in exception_list:
                 # No destruir si es la etiqueta principal o las entradas de resultados
                 widget.pack_forget()
                 continue
@@ -378,7 +388,7 @@ class CalculatorFrame:
             self.popup_menu.grab_release()
 
 
-def select(new_body: calculator.Body):
+def select(new_body: Body):
     '''
     Seleccionar un cuerpo geométrico para ser representado en la interfaz de la ventana principal.
     '''
