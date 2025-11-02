@@ -5,13 +5,16 @@ import tkinter as tk
 from copy import deepcopy
 from PIL import Image, ImageTk
 
-from calculator import bodies_data as bodies, Body
+from calculator import bodies_data, Body
 from unit_handler import to_meters, length_from_to, meters2_to, meters3_to
 
 # Texto de saludo
-SALUDO = "Seleccione una figura del menú desplegable para calcular su volumen"
+SALUDO = "Seleccione una figura del menú desplegable para calcular su volumen." \
+"\n\nEn el menu inicio abra el sub-menu 'cuerpos' para seleccionar que cuerpo geométrico desea calcular." \
+"\n\nY en el menu de 'unidades' puede seleccionar que unidad de medida utilizar."
 
 # Los cuerpos se obtienen de la lista bodies_data del modulo 'calculator'
+bodies = bodies_data.copy()
 
 # Elemento de ventana de tkinter
 window = tk.Tk()
@@ -160,7 +163,8 @@ class CalculatorFrame:
 
         # Etiqueta de inicio
         self.etiqueta_1 = tk.Label(self.main_frame, text=SALUDO,
-                                   font=("Arial", 12), bg="gray", wraplength=350)
+                                   font=("Arial", 14, 'bold'), bg="gray", wraplength=350,
+                                   pady=15)
         self.etiqueta_1.pack(side='top', fill='x')
 
         # Unidades a emplear (siempre toma la primera de la lista por defecto)
@@ -424,19 +428,19 @@ window.configure(bg="lightblue")
 # Menu desplegable
 menu_bar = tk.Menu(window)
 menu_principal = tk.Menu(menu_bar, tearoff=0)
-submenu_figuras = tk.Menu(menu_principal, tearoff=0)
+submenu_cuerpos = tk.Menu(menu_principal, tearoff=0)
 menu_unidades = tk.Menu(menu_bar, tearoff=0)
 submenu_longitud = tk.Menu(menu_unidades, tearoff=0)
 submenu_volumen = tk.Menu(menu_unidades, tearoff=0)
 submenu_superficie = tk.Menu(menu_unidades, tearoff=0)
 window.config(menu=menu_bar)
 
-# Añadir las figuras al sub-menu figuras
+# Añadir los cuerpos al sub-menu cuerpos
 for body in bodies:
-    submenu_figuras.add_command(label=body, command=lambda x=body: select(x))
-# Añadir el menu figuras al menu principal
-menu_principal.add_cascade(label='Figuras', menu=submenu_figuras)
-# Añadir el menu figuras al menu principal
+    submenu_cuerpos.add_command(label=body, command=lambda x=body: select(x))
+# Añadir el menu cuerpos al menu principal
+menu_principal.add_cascade(label='Cuerpos', menu=submenu_cuerpos)
+# Añadir el menu cuerpos al menu principal
 menu_principal.add_command(label='Reiniciar', command=clean_window)
 # Añadir la opcion salir al menu principal
 menu_principal.add_separator()
