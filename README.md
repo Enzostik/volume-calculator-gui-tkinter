@@ -30,15 +30,18 @@ Aplicación de cálculo del volumen de un cuerpo geométrico con interfaz gráfi
     ```bash
     python main.py
     ```
-
-2. Selección del cuerpo geométrico desde el menu `figuras` del menú principal.
 <div align="center">
   <img src="assets/step1.png" width="40%" alt="Select geometric body" />
 </div>
 
+2. Selección del cuerpo geométrico desde el menu `figuras` del menú principal.
+<div align="center">
+  <img src="assets/step2.png" width="40%" alt="Select geometric body" />
+</div>
+
 3. Añadir los valores de las dimensiones.
 <div align="center">
-  <img src="assets/step2.png" width="40%" alt="Add sizes values" />
+  <img src="assets/step3.png" width="40%" alt="Add sizes values" />
 </div>
 
 4. *(Opcional)* Seleccionar las unidades deseadas para cada parámetro (longitud, volumen y superficie) desde desde su selector dentro de la ventana, o desde las opciones del menú `unidades` en la barra de menús.
