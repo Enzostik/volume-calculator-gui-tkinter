@@ -1,6 +1,6 @@
 # volume-calculator-gui-tkinter
 <div align='center'>
-    <img src="assets/logo.png", width="50%", alt="Volume Calculator">
+    <img src="assets/logo.svg", width="50%", alt="Volume Calculator">
 </div>
 <hr>
 
@@ -8,13 +8,19 @@ Proyecto del Grupo 1 de la Comisión 2 del Informatorio 2025.
 
 Aplicación de cálculo del volumen de un cuerpo geométrico con interfaz gráfica empleando tkinter.
 
+
 ## Contenido
+- [Requerimientos](#requerimientos)
 - [Uso de la aplicación](#uso-de-la-aplicación)
 - [Añadir formas geométricas](#añadir-formas-geométricas)
     - [Añadir el código](#añadir-el-código)
     - [Añadir imágenes](#añadir-imágenes)
     - [Cambiar la variable bodies](#cambiar-la-variable-bodies)
     - [Ejecutar la aplicación](#ejecutar-la-aplicación)
+
+## Requerimientos
+* **Python >= 3.13**
+  * `pillow >= 12.0.0`
 
 ## Uso-de-la-aplicación
 1. Abrir la aplicación.
@@ -27,22 +33,23 @@ Aplicación de cálculo del volumen de un cuerpo geométrico con interfaz gráfi
 
 2. Selección del cuerpo geométrico desde el menu `figuras` del menú principal.
 <div align="center">
-  <img src="assets/" width="60%" alt="Select geometric body" />
+  <img src="assets/step1.png" width="40%" alt="Select geometric body" />
 </div>
 
 3. Añadir los valores de las dimensiones.
 <div align="center">
-  <img src="assets/" width="60%" alt="Add sizes values" />
+  <img src="assets/step2.png" width="40%" alt="Add sizes values" />
 </div>
 
 4. *(Opcional)* Seleccionar las unidades deseadas para cada parámetro (longitud, volumen y superficie) desde desde su selector dentro de la ventana, o desde las opciones del menú `unidades` en la barra de menús.
 <div align="center">
-  <img src="assets/" width="60%" alt="Select unit" />
+  <img src="assets/step4a.png" width="40%" alt="Select unit" />
+  <img src="assets/step4b.png" width="40%" alt="Select unit" />
 </div>
 
 5. Lectura de los resultados de los valores de volumen y superficie. Haciendo click derecho con el mouse se puede seleccionar la opción de copiar el resultado obtenido. 
 <div align="center">
-  <img src="assets/" width="60%" alt="Read/copy the results" />
+  <img src="assets/step5.png" width="40%" alt="Read/copy the results" />
 </div>
 
 ## Añadir-formas-geométricas
