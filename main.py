@@ -10,7 +10,7 @@ from calculator import bodies_data, Body
 from unit_handler import to_meters, length_from_to, meters2_to, meters3_to
 
 # Texto de saludo
-SALUDO = "Seleccione una figura del menú desplegable para calcular su volumen." \
+SALUDO = "Seleccione un cuerpo geométrico del menú desplegable para calcular su volumen." \
 "\n\nEn el menu inicio abra el sub-menu 'cuerpos' para seleccionar que cuerpo geométrico desea calcular." \
 "\n\nY en el menu de 'unidades' puede seleccionar que unidad de medida utilizar."
 
@@ -301,7 +301,7 @@ class CalculatorFrame:
         # Modificar el título de la ventana para que sea el nombre del cuerpo
         self.etiqueta_1.config(text=new_body)
         # Cargar la imagen
-        try:  # Intenta agregar imagenes de la figura
+        try:  # Intenta agregar imagenes del cuerpo
             # Se carga el archivo con el mismo nombre de la forma en la carpeta imagenes
             img = Image.open(f'images/{new_body.name.lower()}.png')
             img = img.resize((150, 150))
@@ -365,7 +365,7 @@ class CalculatorFrame:
         # Cambiar los valores de los resultados si es necesario
         self.update_results()
 
-    # Funcion para limpiar la pantalla cuando se cambia de opción de figura
+    # Funcion para limpiar la pantalla cuando se cambia de opción del cuerpo
     def clean_frame(self):
         '''
         Elimina/limpia todos los elementos agregados a la ventana.

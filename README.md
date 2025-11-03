@@ -24,9 +24,9 @@ Aplicación de cálculo del volumen de un cuerpo geométrico con interfaz gráfi
 
 ## Uso-de-la-aplicación
 1. Abrir la aplicación.
-    - Utilizando el ejecutable `.exe`
+    - Utilizando el ejecutable `volume-calculator.exe` que se encuentran los [programas publicados](https://github.com/Enzostik/volume-calculator-gui-tkinter/releases).
 
-    - Llamando con python el código `main.py`
+    - Llamando con python el código `main.py` descargando [este repositorio](https://github.com/Enzostik/volume-calculator-gui-tkinter.git) y en la terminal del sistema operativo ejecutar:
     ```bash
     python main.py
     ```
@@ -34,7 +34,7 @@ Aplicación de cálculo del volumen de un cuerpo geométrico con interfaz gráfi
   <img src="assets/step1.png" width="40%" alt="Select geometric body" />
 </div>
 
-2. Selección del cuerpo geométrico desde el menu `figuras` del menú principal.
+2. Selección del cuerpo geométrico desde el menu `cuerpos` del menú principal.
 <div align="center">
   <img src="assets/step2.png" width="40%" alt="Select geometric body" />
 </div>
@@ -63,14 +63,16 @@ from calculator import Body
 
 class NewBody(Body):
     def __init__(self, value = 0, value2 = 0):
-        # En el init de la super clase se debe ingresar el nombre y las variables que correspondan a sus dimensiones.
+        # En el init de la super clase se debe ingresar
+        # el nombre y las variables que correspondan a sus dimensiones.
         super().__init__(
             name = 'BodyName',
             valueName = value,
             value2Name = value2
         ) 
 
-    # Para utilizar los valores de los parámetros se deberán utilizarel método}: self.get('valueName');
+    # Para utilizar los valores de los parámetros se deberán utilizar 
+    # el método: self.get('valueName');
 
     # Método abstracto --> Calcular volumen
     def volume(self):
