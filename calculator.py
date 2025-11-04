@@ -117,5 +117,38 @@ class Cube(Body):
         return 6 * (self.get('lado')**2)
 
 
+class Cylinder(Body):
+    '''
+    Cuerpo geométrico: Cilindro
+    '''
+
+    def __init__(self, radius: int|float = 0, height:int|float = 0):
+        super().__init__(name='Cilindro', radio=radius, altura=height)
+
+    def volume(self):
+        return self.get('altura') * PI * self.get('radio') ** 2
+
+    def surface(self):
+        r = self.get('radio')
+        h = self.get('altura')
+        return 2 * PI * r * (h + r)
+
+class Rectangle(Body):
+    '''
+    Cuerpo geométrico: Prisma rectangular
+    '''
+
+    def __init__(self, width:int|float = 0, height:int|float = 0, length:int|float = 0):
+        super().__init__(name='Prisma rectangular', ancho=width, altura=height, largo=length)
+
+    def volume(self):
+        return self.get('ancho') * self.get('altura') * self.get('largo')
+
+    def surface(self):
+        w = self.get('ancho')
+        h = self.get('altura')
+        l = self.get('largo')
+        return 2 * (w * h + w * l + h * l)
+
 # Variable donde guardar los cuerpos creados/configurados
-bodies_data: list[Body] = [Sphere(), Cube()]
+bodies_data: list[Body] = [Sphere(), Cube(), Cylinder(), Rectangle()]
