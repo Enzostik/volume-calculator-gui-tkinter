@@ -55,8 +55,20 @@ def meters2_to(value: int | float, unit_to: str) -> int | float:
     Método para convertir un valor de superficie de metros cuadrados a otras unidades.
     '''
     match unit_to:
+        case 'km2' | 'kilometro cuadrado':
+            value /= 1000000.0
+        case 'hm2' | 'hectometro cuadrado':
+            value /= 10000.0
+        case 'dam2' | 'decametro cuadrado':
+            value /= 100.0
         case 'm2' | 'metro cuadrado':
             pass
+        case 'dm2' | 'decimetro cuadrado':
+            value *= 100
+        case 'cm2' | 'centimetro cuadrado':
+            value *= 10000
+        case 'mm2' | 'milimetros cuadrados':
+            value *= 1000000
         case _:
             raise IndexError('Unidad de medida no válida.')
     return value

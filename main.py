@@ -32,14 +32,20 @@ u_length: list[str] = [
     'inch-Pulgadas'
 ]
 u_surface: list[str] = [
-    'm2-Metros cuadrados'
+    'm2-Metros cuadrados',
+    'km2-Kilómetros cuadrados',
+    'hm2-Hectómetros cuadrados',
+    'dam2-Decámetros cuadrados',
+    'dm2-Decímetros cuadrados',
+    'cm2-Centímetros cuadrados',
+    'mm2-Milímetros cuadrados'
 ]
 u_volume: list[str] = [
     'm3-Metros cúbicos',
-    'dm3-decimetro cubico',
+    'dm3-Decimetro cubico',
     'l-Litros',
     'ml-Mililitros',
-    'cm3-centimetro cubico',
+    'cm3-Centimetro cubico',
     'mm3-Milímetros cúbicos'
 ]
 
