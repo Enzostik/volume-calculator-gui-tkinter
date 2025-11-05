@@ -9,10 +9,17 @@ from PIL import Image, ImageTk
 from calculator import bodies_data, Body
 from unit_handler import to_meters, length_from_to, meters2_to, meters3_to
 
+# Configuración de la aplicación
 # Texto de saludo
 SALUDO = "Seleccione un cuerpo geométrico del menú desplegable para calcular su volumen." \
 "\n\nEn el menu inicio abra el sub-menu 'cuerpos' para seleccionar que cuerpo geométrico desea calcular." \
 "\n\nY en el menu de 'unidades' puede seleccionar que unidad de medida utilizar."
+# Color de fondo de la ventana
+BG_COLOR = 'lightblue'
+# Color de fondo del texto
+BG_T_COLOR = 'gray'
+# Color del texto de resultados -> Para resaltar serán de otro color
+FG_R_COLOR = 'blue'
 
 # Los cuerpos se obtienen de la lista bodies_data del modulo 'calculator'
 bodies = bodies_data.copy()
@@ -141,12 +148,12 @@ class CalculatorFrame:
         self.body = None
 
         # Se crea un frame que ocupe toda la ventana.
-        canvas = tk.Canvas(root, bg="lightblue")
+        canvas = tk.Canvas(root, bg=BG_COLOR)
         canvas.pack(expand=True, fill='both')
 
         # El contenido a editar se encuentra dentro de este frame.
         self.main_frame = tk.Frame(canvas)
-        self.main_frame.configure(bg="lightblue")
+        self.main_frame.configure(bg=BG_COLOR)
         # self.main_frame.pack(side=tk.LEFT, expand=True, fill='both')
 
         # Scrollbar
@@ -169,10 +176,10 @@ class CalculatorFrame:
                         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units"))
 
         # Etiqueta de inicio
-        self.etiqueta_1 = tk.Label(self.main_frame, text=SALUDO,
-                                   font=("Arial", 14, 'bold'), bg="gray", wraplength=350,
+        self.etiqueta_1 = tk.Label(canvas, text=SALUDO,
+                                   font=("Arial", 14, 'bold'), bg=BG_T_COLOR, wraplength=350,
                                    pady=15)
-        self.etiqueta_1.pack(side='top', fill='x')
+        self.etiqueta_1.pack(expand=True, side=tk.LEFT, fill='x')
 
         # Unidades a emplear (siempre toma la primera de la lista por defecto)
         # Para la unidad de longitud: m-Metros
@@ -205,7 +212,7 @@ class CalculatorFrame:
             _variable = tk.StringVar()
             self.result_entries[key] = CustomEntry(
                 tk.Entry(master=self.main_frame, textvariable=_variable, font=("Arial", 15),
-                         fg="blue", justify='center', width=25, state='readonly'),
+                         fg=FG_R_COLOR, justify='center', width=25, state='readonly'),
                 _variable
             )
 
@@ -304,13 +311,14 @@ class CalculatorFrame:
         self.clean_frame()
         # Guardar el cuerpo
         self.body = new_body
-        # Modificar el título de la ventana para que sea el nombre del cuerpo
-        self.etiqueta_1.config(text=new_body)
+        # Quitar la etiqueta principal y poner un texto con el nombre del cuerpo
+        self.etiqueta_1.pack_forget()
+        tk.Label(self.main_frame, text=new_body, font=("Arial", 14, 'bold'), bg=BG_T_COLOR, pady=15).pack(fill='x')
         # Cargar la imagen
         try:  # Intenta agregar imagenes del cuerpo
             # Se carga el archivo con el mismo nombre de la forma en la carpeta imagenes
             img = Image.open(f'images/{new_body.name.lower()}.png')
-            img = img.resize((150, 150))
+            img = img.resize((200, 200))
             # Convertir la imagen para utilizarla en tkinter
             image = ImageTk.PhotoImage(img)
             # Añadir la imagen en un Label
@@ -321,7 +329,7 @@ class CalculatorFrame:
             pass
         # Etiqueta para las instrucciones
         etiqueta_instruccion = tk.Label(self.main_frame, text="Ingrese los valores indicados:",
-                                        font=("Arial", 10), justify='left', background='lightblue')
+                                        font=("Arial", 10), justify='left', background=BG_COLOR)
         # Añadir la etiqueta al frame
         etiqueta_instruccion.pack(fill='x', pady=5)
 
@@ -332,7 +340,7 @@ class CalculatorFrame:
         for key, value in new_body.parameters.items():
             # Etiqueta con el nombre de la variable
             etiqueta_valor = tk.Label(self.main_frame, text=key[0].upper()+key[1:].lower(),
-                                      font=("Arial", 10), background="gray")
+                                      font=("Arial", 10), background=BG_T_COLOR)
             etiqueta_valor.pack(anchor='w', fill='x', pady=5)
             # Variable de la entrada de texto
             variable_valor = tk.StringVar(name=key, value=value)
@@ -349,7 +357,7 @@ class CalculatorFrame:
         # Etiqueta del volumen
         etiqueta_volumen = tk.Label(
             self.main_frame, text=f"El volumen del {new_body.name.lower()} es:",
-            font=("Arial", 15), fg="blue", bg='gray'
+            font=("Arial", 15), fg=FG_R_COLOR, bg=BG_T_COLOR
         )
         etiqueta_volumen.pack(fill='x', pady=5)
         # Selector de unidades del volumen
@@ -360,7 +368,7 @@ class CalculatorFrame:
         # Etiqueta de la superficie
         etiqueta_superficie = tk.Label(
             self.main_frame, text=f"La superficie del {new_body.name.lower()} es:",
-            font=("Arial", 15), fg="blue", bg='gray'
+            font=("Arial", 15), fg=FG_R_COLOR, bg=BG_T_COLOR
         )
         etiqueta_superficie.pack(fill='x', pady=5)
         # Selector de unidades de la superficie
@@ -378,8 +386,6 @@ class CalculatorFrame:
         '''
         self.body = None  # Eliminar las variables previamente utilizadas
         self.entries_var.clear()  # Eliminar las variables previamente utilizadas
-        # Devolver la etiqueta principal al mensaje de entrada
-        self.etiqueta_1.config(text=SALUDO)
         # Elementos a eliminar
         exception_list = [self.etiqueta_1] + [element.widget for element in list(self.result_entries.values()) + list(self.unit_selector.values())]
         for widget in self.main_frame.winfo_children():
@@ -389,7 +395,9 @@ class CalculatorFrame:
                 continue
             widget.destroy()
         # Volver a colocar le etiqueta principal
-        self.etiqueta_1.pack(side='top', fill='x')
+        self.etiqueta_1.pack(expand=True, side=tk.LEFT, fill='x')
+        # Agregar un elemento vacío en el Frame principal para solucionar un error con la varra de desplazamiento
+        tk.Frame(self.main_frame, height=1, bg=BG_COLOR).pack(side=tk.BOTTOM)
 
     def __show_popupmenu(self, value_string: tk.StringVar, event: tk.Event = None):
         try:
@@ -422,15 +430,15 @@ def clean_window():
 window.title('Calculadora de volumen')
 
 # Tamaño
-window.geometry("500x600")
-window.minsize(400, 450)
-window.maxsize(600, 700)
+window.geometry("500x700")
+window.minsize(400, 500)
+window.maxsize(600, 800)
 
 # Icono
 window.iconbitmap('icon.ico')
 
 # Color de fondo
-window.configure(bg="lightblue")
+window.configure(bg=BG_COLOR)
 
 # Menu desplegable
 menu_bar = tk.Menu(window)
