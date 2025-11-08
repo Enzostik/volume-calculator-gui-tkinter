@@ -1,13 +1,13 @@
 '''
 volume-calculator
-Implementación de interfáz gráfica tkinter para el cálculo de forma geométrica.
+Implementación de interfaz gráfica tkinter para el cálculo de forma geométrica.
 '''
 import tkinter as tk
 from copy import deepcopy
 from PIL import Image, ImageTk
 
-from calculator import bodies_data, Body
-from unit_handler import to_meters, length_from_to, meters2_to, meters3_to
+import calculator
+import unit_handler as unit
 
 # Configuración de la aplicación
 # Texto de saludo
@@ -22,7 +22,7 @@ BG_T_COLOR = 'gray'
 FG_R_COLOR = 'blue'
 
 # Los cuerpos se obtienen de la lista bodies_data del modulo 'calculator'
-bodies = bodies_data.copy()
+bodies = calculator.bodies_data.copy()
 
 # Elemento de ventana de tkinter
 window = tk.Tk()
@@ -235,7 +235,7 @@ class CalculatorFrame:
         self.value_selected: float = None
     # Variable que se llamará cuando se cambie alguna de las entradas de texto
 
-    def set_unit(self, name: str, unit: str):
+    def set_unit(self, name: str, unit_name: str):
         '''
         Cambiar los valores de la unidad `unit` para el parámetro `name` seleccionado.
 
@@ -246,7 +246,7 @@ class CalculatorFrame:
             raise IndexError(
                 f'{name} no es un parametro válido, intente: {_options}')
         # Cambiar a la unidad seleccionada
-        self.unit_selector[name].set(unit)
+        self.unit_selector[name].set(unit_name)
         # Si el parametro era longitud no hacer nada mas
         if name == 'length':
             return
@@ -264,7 +264,7 @@ class CalculatorFrame:
             value = val.get()
             value = 0 if value == '' else float(value)
             # Convertir el valor a la unidad deseada
-            value = length_from_to(
+            value = unit.length_from_to(
                 value, self.__previus_unit_length.split('-', maxsplit=1)[0], unit_to.split('-')[0])
             val.set(format_value(value))
         # Actualizar el valor anterior
@@ -277,7 +277,7 @@ class CalculatorFrame:
         value = 0 if value == '' else float(value)
         # El parametro en el Body siempre se guardará en las unidades por defecto
         # Convertirlas en m - Metros
-        value = to_meters(
+        value = unit.to_meters(
             value, self.unit_selector['length'].get().split('-')[0])
         # Cambiar el valor del parametro
         self.body.set(name, value)
@@ -292,18 +292,18 @@ class CalculatorFrame:
         Realizando sus respectivos cálculos nuevamente.
         '''
         # Obtener la unidad del volumen y convertirla de la unidad por defecto (m3) a la deseada
-        vol_value = meters3_to(
+        vol_value = unit.meters3_to(
             self.body.volume(), self.unit_selector['volume'].get().split('-')[0])
         # Y cambiarla en el resultado
         self.result_entries['volume'].set(format_value(vol_value))
 
         # Obtener la unidad del volumen y convertirla de la unidad por defecto (m3) a la deseada
-        surf_value = meters2_to(
+        surf_value = unit.meters2_to(
             self.body.surface(), self.unit_selector['surface'].get().split('-')[0])
         self.result_entries['surface'].set(format_value(surf_value))
 
     # Cambiar el contenido del frame para que corresponda al cuerpo geométrico
-    def load(self, new_body: Body):
+    def load(self, new_body: calculator.Body):
         '''
         Carga un cuerpo geométrico para representarlo en la interfáz gráfica.
         '''
@@ -407,7 +407,7 @@ class CalculatorFrame:
             self.popup_menu.grab_release()
 
 
-def select(new_body: Body):
+def select(new_body: calculator.Body):
     '''
     Seleccionar un cuerpo geométrico para ser representado en la interfaz de la ventana principal.
     '''
