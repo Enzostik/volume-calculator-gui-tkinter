@@ -21,12 +21,6 @@ BG_T_COLOR = 'gray'
 # Color del texto de resultados -> Para resaltar serán de otro color
 FG_R_COLOR = 'blue'
 
-# Los cuerpos se obtienen de la lista bodies_data del modulo 'calculator'
-bodies = calculator.bodies_data.copy()
-
-# Elemento de ventana de tkinter
-window = tk.Tk()
-
 # Unidades seleccionadas
 u_length: list[str] = [
     'm-Metros',
@@ -94,9 +88,9 @@ def format_value(value: float) -> str:
 
 
 # Elementos de tkinter
-# Registrar la función para validar que la nueva entrada sea un número
-entry_verification = (window.register(validate_number), '%P')
 
+# Registrar la función para validar que la nueva entrada sea un número
+entry_verification = ()
 
 class CustomEntry:
     '''
@@ -297,7 +291,7 @@ class CalculatorFrame:
         # Y cambiarla en el resultado
         self.result_entries['volume'].set(format_value(vol_value))
 
-        # Obtener la unidad del volumen y convertirla de la unidad por defecto (m3) a la deseada
+        # Obtener la unidad de superficie y convertirla de la unidad por defecto (m2) a la deseada
         surf_value = unit.meters2_to(
             self.body.surface(), self.unit_selector['surface'].get().split('-')[0])
         self.result_entries['surface'].set(format_value(surf_value))
@@ -396,8 +390,20 @@ class CalculatorFrame:
             widget.destroy()
         # Volver a colocar le etiqueta principal
         self.etiqueta_1.pack(expand=True, side=tk.LEFT, fill='x')
-        # Agregar un elemento vacío en el Frame principal para solucionar un error con la varra de desplazamiento
+        # Agregar un elemento vacío en el Frame principal para solucionar un error con la barra de desplazamiento
         tk.Frame(self.main_frame, height=1, bg=BG_COLOR).pack(side=tk.BOTTOM)
+
+    def reset_window(self):
+        '''
+        Borrar todo el contenido de la ventana principal y volver a los valores por defecto.
+        '''
+        # Eliminar elementos del frame
+        self.clean_frame()
+        # Regresar los valores de unidades a los valores por defecto
+        self.set_unit('length', u_length[0])
+        self.set_unit('surface', u_surface[0])
+        self.set_unit('volume', u_volume[0])
+
 
     def __show_popupmenu(self, value_string: tk.StringVar, event: tk.Event = None):
         try:
@@ -407,83 +413,74 @@ class CalculatorFrame:
             self.popup_menu.grab_release()
 
 
-def select(new_body: calculator.Body):
-    '''
-    Seleccionar un cuerpo geométrico para ser representado en la interfaz de la ventana principal.
-    '''
-    main_frame.load(deepcopy(new_body))
+if __name__ == '__main__':
+    # Los cuerpos se obtienen de la lista bodies_data del modulo 'calculator'
+    bodies = calculator.bodies_data.copy()
 
+    # Elemento de ventana de tkinter
+    window = tk.Tk()
 
-def clean_window():
-    '''
-    Borrar todo el contenido de la ventana principal y volver a los valores por defecto.
-    '''
-    # Eliminar elementos del frame
-    main_frame.clean_frame()
-    # Regresar los valores de unidades a los valores por defecto
-    main_frame.set_unit('length', u_length[0])
-    main_frame.set_unit('surface', u_surface[0])
-    main_frame.set_unit('volume', u_volume[0])
+    # Registrar la función para validar que la nueva entrada sea un número
+    entry_verification = (window.register(validate_number), '%P')
 
+    # Título de la ventana
+    window.title('Calculadora de volumen')
 
-# Título de la ventana
-window.title('Calculadora de volumen')
+    # Tamaño
+    window.geometry("500x700")
+    window.minsize(400, 500)
+    window.maxsize(600, 800)
 
-# Tamaño
-window.geometry("500x700")
-window.minsize(400, 500)
-window.maxsize(600, 800)
+    # Icono
+    window.iconbitmap('icon.ico')
 
-# Icono
-window.iconbitmap('icon.ico')
+    # Color de fondo
+    window.configure(bg=BG_COLOR)
 
-# Color de fondo
-window.configure(bg=BG_COLOR)
+    # Ventana principal de la aplicación
+    main_frame = CalculatorFrame(window)
 
-# Menu desplegable
-menu_bar = tk.Menu(window)
-menu_principal = tk.Menu(menu_bar, tearoff=0)
-submenu_cuerpos = tk.Menu(menu_principal, tearoff=0)
-menu_unidades = tk.Menu(menu_bar, tearoff=0)
-submenu_longitud = tk.Menu(menu_unidades, tearoff=0)
-submenu_volumen = tk.Menu(menu_unidades, tearoff=0)
-submenu_superficie = tk.Menu(menu_unidades, tearoff=0)
-window.config(menu=menu_bar)
+    # Menu desplegable
+    menu_bar = tk.Menu(window)
+    menu_principal = tk.Menu(menu_bar, tearoff=0)
+    submenu_cuerpos = tk.Menu(menu_principal, tearoff=0)
+    menu_unidades = tk.Menu(menu_bar, tearoff=0)
+    submenu_longitud = tk.Menu(menu_unidades, tearoff=0)
+    submenu_volumen = tk.Menu(menu_unidades, tearoff=0)
+    submenu_superficie = tk.Menu(menu_unidades, tearoff=0)
+    window.config(menu=menu_bar)
 
-# Añadir los cuerpos al sub-menu cuerpos
-for body in bodies:
-    submenu_cuerpos.add_command(label=body, command=lambda x=body: select(x))
-# Añadir el menu cuerpos al menu principal
-menu_principal.add_cascade(label='Cuerpos', menu=submenu_cuerpos)
-# Añadir el menu cuerpos al menu principal
-menu_principal.add_command(label='Reiniciar', command=clean_window)
-# Añadir la opcion salir al menu principal
-menu_principal.add_separator()
-menu_principal.add_command(label='Salir', command=window.destroy)
-# Añadir el menu principal a la barra de menu
-menu_bar.add_cascade(label="Inicio", menu=menu_principal)
+    # Añadir los cuerpos al sub-menu cuerpos
+    for body in bodies:
+        submenu_cuerpos.add_command(label=body, command=lambda x=body: main_frame.load(deepcopy(x)))
+    # Añadir el menu cuerpos al menu principal
+    menu_principal.add_cascade(label='Cuerpos', menu=submenu_cuerpos)
+    # Añadir el menu cuerpos al menu principal
+    menu_principal.add_command(label='Reiniciar', command=main_frame.reset_window)
+    # Añadir la opcion salir al menu principal
+    menu_principal.add_separator()
+    menu_principal.add_command(label='Salir', command=window.destroy)
+    # Añadir el menu principal a la barra de menu
+    menu_bar.add_cascade(label="Inicio", menu=menu_principal)
 
-# Añadir unidades al sub-menu longitud
-for l in u_length:
-    submenu_longitud.add_command(
-        label=l, command=lambda x=l: main_frame.set_unit('length', x))
-# Añadir unidades al sub-menu superficie
-for surf in u_surface:
-    submenu_superficie.add_command(
-        label=surf, command=lambda x=surf: main_frame.set_unit('surface', x))
-# Añadir unidades al sub-menu volumen
-for vol in u_volume:
-    submenu_volumen.add_command(
-        label=vol, command=lambda x=vol: main_frame.set_unit('volume', x))
-# Añadir los sub-menus
-menu_unidades.add_cascade(label='Longitud', menu=submenu_longitud)
-menu_unidades.add_cascade(label='Volumen', menu=submenu_volumen)
-menu_unidades.add_cascade(label='Superficie', menu=submenu_superficie)
-# Añadir el menu unidades a la barra de menu
-menu_bar.add_cascade(label='Unidades', menu=menu_unidades)
+    # Añadir unidades al sub-menu longitud
+    for l in u_length:
+        submenu_longitud.add_command(
+            label=l, command=lambda x=l: main_frame.set_unit('length', x))
+    # Añadir unidades al sub-menu superficie
+    for surf in u_surface:
+        submenu_superficie.add_command(
+            label=surf, command=lambda x=surf: main_frame.set_unit('surface', x))
+    # Añadir unidades al sub-menu volumen
+    for vol in u_volume:
+        submenu_volumen.add_command(
+            label=vol, command=lambda x=vol: main_frame.set_unit('volume', x))
+    # Añadir los sub-menus
+    menu_unidades.add_cascade(label='Longitud', menu=submenu_longitud)
+    menu_unidades.add_cascade(label='Volumen', menu=submenu_volumen)
+    menu_unidades.add_cascade(label='Superficie', menu=submenu_superficie)
+    # Añadir el menu unidades a la barra de menu
+    menu_bar.add_cascade(label='Unidades', menu=menu_unidades)
 
-# Ventana principal de la aplicación
-main_frame = CalculatorFrame(window)
-
-window.update()
-window.mainloop()
+    window.update()
+    window.mainloop()
